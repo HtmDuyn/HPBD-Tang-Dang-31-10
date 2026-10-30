@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 
 <head>
   <title>Chúc mừng sinh nhật Anh Iu Tăng Đăng</title>
   <meta charset="UTF-8">
+  <link rel="preload" href="assets/fonts/PatrickHand-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Một lời chúc sinh nhật dành riêng cho Anh Iu Tăng Đăng.">
   <link rel="icon" href="爱心.png" type="image/png">
-  <link rel="stylesheet" href="birthday-scenes.css">
+  <link rel="stylesheet" href="birthday-scenes.css?v=handwritten-letter-5">
   <!--     https://github.com/he-weilai/love-code -->
   <style>
     html, body {
@@ -15,7 +16,7 @@
       overflow: hidden;
       background: #000;
     }
-
+   
     canvas {
       position: absolute;
       left: 0;
@@ -25,7 +26,7 @@
       background-color: rgba(0, 0, 0, .2);
       transition: opacity 2s ease, filter 2s ease, transform 2s ease;
     }
-    body { font-family: Georgia, 'Times New Roman', serif; color: #fff1df; }
+    body { font-family: Arial, 'Segoe UI', sans-serif; color: #fff1df; }
     .birthday-active #heart { opacity: 0; }
     .heart-leaving #heart { opacity: 0; filter: blur(10px); transform: scale(.92); }
     #transition-glow {
@@ -45,7 +46,7 @@
       transition: opacity .8s ease, visibility .8s;
     }
     #welcome p { margin: 0; color: #efc5d4; font-size: clamp(20px, 4vw, 30px); }
-    #open-gift { justify-self: center; padding: 14px 32px; border: 1px solid #e8b5c7; border-radius: 30px; background: #f1c6d5; color: #381a2b; font: 16px Georgia, serif; cursor: pointer; box-shadow: 0 0 40px #ed8eb526; }
+    #open-gift { justify-self: center; padding: 14px 32px; border: 1px solid #e8b5c7; border-radius: 30px; background: #f1c6d5; color: #381a2b; font: 16px Arial, sans-serif; cursor: pointer; box-shadow: 0 0 40px #ed8eb526; }
     .experience-started #welcome { opacity: 0; visibility: hidden; pointer-events: none; }
     #birthday {
       position: fixed; inset: 0; isolation: isolate; visibility: hidden;
@@ -93,7 +94,7 @@
     .candle::before { content: ''; position: absolute; bottom: 39px; left: -2px; width: 14px; height: 23px; border-radius: 65% 35% 55% 45%; background: radial-gradient(ellipse at 50% 70%, #fffbe6 10%, #ffd477 45%, #ff8e4c 80%); box-shadow: 0 0 16px #ffc96c, 0 0 42px #ffb76180; transform-origin: bottom; animation: flicker .8s ease-in-out infinite alternate; }
     @keyframes flicker { to { transform: scale(.85, 1.12) rotate(5deg); } }
     .birthday-center .eyebrow { margin: 0 0 12px; font: 11px Arial, sans-serif; letter-spacing: .35em; color: #dca6b9; text-transform: uppercase; }
-    h1 { margin: 0; font-size: clamp(25px, 4.5vw, 42px); line-height: 1.3; font-weight: normal; text-shadow: 0 0 25px #ffa9cf45; }
+    h1 { font-family: 'Times New Roman', serif; margin: 0; font-size: clamp(25px, 4.5vw, 42px); line-height: 1.3; font-weight: normal; text-shadow: 0 0 25px #ffa9cf45; }
     h1 span { display: block; color: #ffd3a4; font-style: italic; margin-top: 5px; }
     .dedication { margin: 17px 0 0; font-size: clamp(13px, 2vw, 16px); color: #d5abbc; }
     #music-toggle { position: fixed; bottom: 18px; right: 18px; z-index: 5; max-width: calc(100vw - 36px); padding: 11px 17px; border: 1px solid #e6b4cb55; border-radius: 25px; color: #ffe8ef; background: #1b101de8; font: 13px Arial, sans-serif; cursor: pointer; visibility: hidden; }
@@ -115,6 +116,7 @@
   </div>
   <canvas id="heart" width="1920" height="947"></canvas>
   <div id="transition-glow" aria-hidden="true"></div>
+  <div id="candle-transition" aria-hidden="true"></div>
   <section id="birthday" aria-label="Lời chúc sinh nhật" aria-hidden="true">
     <div id="wishes" aria-hidden="true"></div>
     <div class="birthday-center">
@@ -124,12 +126,12 @@
         <div class="cake-layer cake-top"><div class="icing"></div></div>
         <div class="candle"></div>
       </div>
-      <p class="eyebrow">Một ngày thật đặc biệt</p>
+      <p class="eyebrow">31/10/2006 - 31/10/2026</p>
       <h1>Chúc mừng sinh nhật<span>Anh Iu Tăng Đăng</span></h1>
       <p class="dedication">Thêm một tuổi mới, thêm ngàn điều hạnh phúc ♡</p>
       <div class="blow-action">
         <button id="blow-candle" type="button" hidden>Thổi nến ♡</button>
-        <p id="candle-hint" hidden>Nhắm mắt, ước một điều rồi thổi nến nhé anh…</p>
+        <p id="candle-hint" hidden>Nhắm mắt, ước một điều rồi thổi nến anh nhenn…</p>
       </div>
     </div>
   </section>
@@ -140,18 +142,13 @@
       <h2 id="letter-heading">Anh Iu Tăng Đăng ♡</h2>
       <div id="letter-text" aria-hidden="true"></div>
       <p id="letter-accessible" class="sr-only"></p>
-      <div class="letter-footer"><span>Thương anh, hôm nay và cả mai sau.</span><button id="finish-letter" type="button">Đọc trọn lời chúc</button></div>
+      <div class="letter-footer"><span class="letter-signature">from Myduyn with love <span class="letter-kiss" role="img" aria-label="kiss">💋</span></span><div class="letter-candle-cluster" aria-hidden="true"><i class="letter-candle"></i><i class="letter-candle"></i><i class="letter-candle"></i></div><button id="finish-letter" type="button">Đọc trọn lời chúc</button></div>
     </article>
-    <aside id="ordinary-dock" hidden aria-label="Nhạc Ordinary của Alex Warren">
-      <p>♫ Ordinary — Alex Warren</p>
-      <div id="ordinary-player"></div>
-      <a href="https://www.youtube.com/watch?v=u2ah9tWTkmk" target="_blank" rel="noopener noreferrer">Mở bài hát trên YouTube ↗</a>
-    </aside>
   </section>
-  <audio id="love-song" loop preload="metadata"></audio>
+  <audio id="love-song" preload="auto"></audio>
   <button id="music-toggle" type="button" aria-pressed="false">♫ Bật nhạc sinh nhật</button>
-  <script src="media-config.js"></script>
-  <script src="birthday-scenes.js"></script>
+  <script src="media-config.js?v=handwritten-letter-5"></script>
+  <script src="birthday-scenes.js?v=handwritten-letter-5"></script>
   <script>
     var birthdayStarted = false;
     var experienceStarted = false;
@@ -238,7 +235,7 @@
         musicButton.textContent = 'Không bật được nhạc · Thử lại';
       }
     });
-    var shortWishes = ['Luôn bình an ♡', 'Mãi hạnh phúc nhé!', 'Tuổi mới rực rỡ', 'Yêu anh thật nhiều', 'Vạn điều như ý', 'Luôn cười thật tươi', 'Ước mơ thành hiện thực', 'Mỗi ngày đều vui', 'Thương anh nhất ♡', 'Ngập tràn yêu thương'];
+    var shortWishes = ['Happy birtday Tăng Đenggg','luôn iuu em nhá ♡', 'Mãi iuuu anhhhh!', 'Tuổi mới bùng nổ', 'Yêu anhhh', 'Vạn điều như ước muốn', 'Luôn cười thật tươi nha anh', 'Ước mơ thành hiện thực', 'Mỗi ngày gấp đôi niềm vui', 'Thương anh nhất ♡', 'Luôn hạnh phúc nè!','sinh nhật vui vẻ','happy birtday anhhh iuuu','thương anh nhìu lắm','màu giàuu nhoo!','luôn thương em','háp pi bớt dayy Tăng Đeng','anh iu sinh nhật vui vẻ nhoo!','chúc anh iu luôn vui vẻ','chúc anh iu luôn hạnh phúc','chúc anh iu luôn thành công','chúc anh iu luôn may mắn','chúc anh iu luôn khỏe mạnh','chúc anh iu luôn bình an','chúc anh iu luôn hạnh phúc và vui vẻ','chúc anh iu luôn yêu đời và yêu em'];
     var wishIndex = 0;
     function spawnWish() {
       if (document.hidden || BirthdayScenes.candleBlown) return;

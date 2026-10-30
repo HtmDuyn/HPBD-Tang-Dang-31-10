@@ -7,18 +7,45 @@
   var musicButton = document.getElementById('music-toggle');
   var blowButton = document.getElementById('blow-candle');
   var songPlaying = false;
-  var songReady = Boolean(config.song || config.youtubeId);
-  var youtubePlayer;
-  var youtubeReady = false;
-  var youtubeRequested = false;
-  var youtubeNeedsStart = true;
-  var songStart = Math.max(0, Number(config.youtubeStart) || 0);
-  var dock = document.getElementById('ordinary-dock');
+  var songWanted = false;
+  var songStart = Math.max(0, Number(config.songStart) || 35);
+  var songPrepared = false;
+  var songObjectUrl;
+  var songLoading;
+  var volumeAnimation;
   var sceneTimer;
-  var photoTimer;
+  var memoryTimers = [];
+  var memoriesRunning = false;
   var photoIndex = 0;
   var typingTimer;
-  if (config.song) song.src = config.song;
+  // Load the complete local MP3 so seeking also works on Python's static server.
+  function prepareSong() {
+    if (!songLoading) songLoading = (async function () {
+      var response = await fetch(config.song || 'assets/ordinary.mp3');
+      if (!response.ok) throw new Error('MP3 HTTP ' + response.status);
+      var blob = await response.blob();
+      songObjectUrl = URL.createObjectURL(blob);
+      await new Promise(function (resolve, reject) {
+        song.addEventListener('loadedmetadata', resolve, { once: true });
+        song.addEventListener('error', reject, { once: true });
+        song.src = songObjectUrl;
+        song.preload = 'auto';
+        song.loop = false;
+        song.load();
+      });
+      songPrepared = true;
+      song.currentTime = Math.min(songStart, Math.max(0, song.duration - 1));
+    })().catch(function (error) {
+      songLoading = null;
+      throw error;
+    });
+    return songLoading;
+  }
+  // Begin loading before the heart animation, rather than waiting for the candle.
+  prepareSong().catch(function () {});
+  song.addEventListener('ended', function () {
+    if (songWanted) { song.currentTime = songStart; playSong(); }
+  });
 
   var api = window.BirthdayScenes = {
     candleBlown: false,
@@ -40,110 +67,50 @@
     musicButton.textContent = songPlaying ? '♫ Tắt nhạc' : '♫ Phát Ordinary';
   }
 
-  function startYouTubePlayback() {
-    if (!youtubeReady || !youtubeRequested) return;
-    if (youtubeNeedsStart) {
-      youtubePlayer.seekTo(songStart, true);
-      youtubeNeedsStart = false;
+  function fadeSongIn() {
+    cancelAnimationFrame(volumeAnimation);
+    var startedAt = performance.now();
+    var initialVolume = song.volume;
+    function step(now) {
+      if (!songWanted || song.paused) return;
+      var progress = Math.min(1, (now - startedAt) / 5000);
+      var eased = progress * progress * (3 - 2 * progress);
+      song.volume = initialVolume + (.65 - initialVolume) * eased;
+      if (progress < 1) volumeAnimation = requestAnimationFrame(step);
     }
-    youtubePlayer.unMute();
-    youtubePlayer.setVolume(65);
-    youtubePlayer.playVideo();
+    volumeAnimation = requestAnimationFrame(step);
   }
 
   async function playSong() {
-    if (!songReady) { updateSongButton(); return; }
-    if (!song.src && config.youtubeId) {
-      youtubeRequested = true;
-      dock.hidden = false;
-      placePlayer();
-      prepareYouTube();
-      musicButton.textContent = '♫ Phát Ordinary';
-      startYouTubePlayback();
-      return;
-    }
+    songWanted = true;
     try {
-      song.volume = .65;
+      await prepareSong();
+      if (!songWanted) return;
+      song.muted = false;
+      song.volume = api.letterStarted ? .06 : 0;
       await song.play();
-      songPlaying = true;
-      window.musicEnabled = true;
+      songPlaying = !song.paused;
+      window.musicEnabled = songPlaying;
       updateSongButton();
+      if (api.letterStarted && songPlaying) fadeSongIn();
     } catch (error) {
       songPlaying = false;
       updateSongButton();
-      musicButton.textContent = '♫ Bấm để thử phát lại';
+      musicButton.textContent = '\u266b B\u1ea5m \u0111\u1ec3 ph\u00e1t nh\u1ea1c';
+      console.error('Could not play local birthday MP3:', error);
     }
   }
 
   function toggleSong() {
-    if (!songReady) return;
-    if (songPlaying) {
+    if (songPlaying || (songWanted && !songPrepared)) {
+      songWanted = false;
+      cancelAnimationFrame(volumeAnimation);
       song.pause();
-      youtubeRequested = false;
-      if (youtubeReady) youtubePlayer.pauseVideo();
       songPlaying = false;
       window.musicEnabled = false;
       updateSongButton();
     } else playSong();
   }
-
-  function placePlayer() {
-    var parent = innerWidth < 1100 ? document.querySelector('.love-letter') : document.getElementById('letter-scene');
-    if (dock.parentElement !== parent) parent.appendChild(dock);
-  }
-  window.addEventListener('resize', placePlayer);
-
-  function prepareYouTube() {
-    if (!config.youtubeId || window.__birthdayYouTubeLoading) return;
-    window.__birthdayYouTubeLoading = true;
-    window.onYouTubeIframeAPIReady = function () {
-      youtubePlayer = new YT.Player('ordinary-player', {
-        width: 202, height: 200, videoId: config.youtubeId,
-        host: 'https://www.youtube-nocookie.com',
-        playerVars: { playsinline: 1, rel: 0, origin: window.location.origin, start: songStart },
-        events: {
-          onReady: function () {
-            youtubeReady = true;
-            var iframe = youtubePlayer.getIframe();
-            iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
-            iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-            if (youtubeRequested && !song.src) {
-              startYouTubePlayback();
-            } else {
-              youtubePlayer.cueVideoById({ videoId: config.youtubeId, startSeconds: songStart });
-            }
-          },
-          onStateChange: function (event) {
-            if (!api.candleBlown || song.src) return;
-            if (event.data === 0 && youtubeRequested) {
-              youtubeNeedsStart = true;
-              startYouTubePlayback();
-              return;
-            }
-            songPlaying = event.data === 1;
-            window.musicEnabled = songPlaying;
-            updateSongButton();
-          },
-          onAutoplayBlocked: function () { musicButton.textContent = '♫ Bấm để phát Ordinary'; },
-          onError: function () {
-            songPlaying = false;
-            musicButton.setAttribute('aria-pressed', 'false');
-            musicButton.textContent = '♫ Thử phát lại Ordinary';
-          }
-        }
-      });
-    };
-    var script = document.createElement('script');
-    script.src = 'https://www.youtube.com/iframe_api';
-    script.onerror = function () {
-      window.__birthdayYouTubeLoading = false;
-      musicButton.textContent = '♫ Bấm để thử phát Ordinary';
-    };
-    document.head.appendChild(script);
-  }
-  document.getElementById('open-gift').addEventListener('click', function () {
-    if (!song.src) prepareYouTube();
-  });
 
   blowButton.addEventListener('click', function () {
     if (api.candleBlown || blowButton.hidden) return;
@@ -153,6 +120,18 @@
     document.getElementById('candle-hint').textContent = 'Một lá thư nhỏ đang chờ anh…';
     document.querySelector('.cake').setAttribute('aria-label', 'Bánh kem với ngọn nến vừa được thổi tắt');
     document.body.classList.add('candle-out');
+    var transition = document.getElementById('candle-transition');
+    for (var petalIndex = 0; petalIndex < 18; petalIndex++) {
+      var petal = document.createElement('span');
+      petal.className = 'transition-petal';
+      var angle = petalIndex / 18 * Math.PI * 2;
+      petal.style.setProperty('--dx', Math.cos(angle) * (150 + Math.random() * 170) + 'px');
+      petal.style.setProperty('--dy', Math.sin(angle) * (100 + Math.random() * 180) + 'px');
+      petal.style.setProperty('--spin', (Math.random() * 360) + 'deg');
+      petal.style.setProperty('--delay', Math.random() * .3 + 's');
+      transition.appendChild(petal);
+    }
+    setTimeout(function () { transition.replaceChildren(); }, 3900);
     document.getElementById('wishes').replaceChildren();
 
     // Stop the music box and start the vocal track within the candle click.
@@ -160,26 +139,23 @@
     window.musicTimer = null;
     window.musicEnabled = false;
     if (window.audioContext) window.audioContext.suspend().catch(function () {});
-    if (songReady) {
-      youtubeNeedsStart = true;
-      if (song.src) song.currentTime = songStart;
-      playSong();
-    } else updateSongButton();
-    sceneTimer = setTimeout(showLetter, 1500);
+    if (songPrepared) song.currentTime = songStart;
+    playSong();
+    sceneTimer = setTimeout(showLetter, 1600);
   });
 
   var letterLines = [
-    'Chúc mừng sinh nhật Anh Iu Tăng Đăng của em! ♡',
+    'Chúc mừng sinh nhật Anh Iu Tăng Đeng của em! ♡',
     'Chúc anh tuổi mới luôn khỏe mạnh, bình an và cười thật nhiều.',
     'Mong những điều anh ấp ủ sẽ từng chút một trở thành hiện thực.',
-    'Cảm ơn anh vì đã đến, ở lại và làm những ngày bình thường hóa đặc biệt.',
+    'Cảm ơn anh vì đã đến, và làm những ngày bình thường của em hóa đặc biệt.',
     'Em thương cả những lúc anh rạng rỡ lẫn những ngày anh thấy mệt nhoài.',
-    'Khi thế giới ngoài kia quá vội, cứ về đây, em vẫn ở bên anh nhé.',
-    'Mong mình có thêm nhiều chuyến đi, nhiều cái ôm và những tấm hình chung.',
+    'Khi thế giới ngoài kia quá vội, cứ về đây, em vẫn ở bên anh nhá!',
+    'Em mong mình sẽ có thêm nhiều chuyến đi, nhiều cái ôm và những tấm hình chung.',
     'Dù mai này có bận rộn đến đâu, mình vẫn dành sự dịu dàng cho nhau.',
-    'Hôm nay anh cứ thật hạnh phúc, phần yêu thương đã có em lo rồi.',
-    'Yêu anh thật nhiều — cùng em viết tiếp thật nhiều sinh nhật nữa nha! ♡'
-  ];
+    'Hôm nay anh cứ thật hạnh phúc đi, phần yêu thương còn lại đã có em lo rồi.',
+    'Yêu anh nhiều — Em mong chúng mình sẽ cùng viết tiếp thật nhiều sinh nhật nữa nhá! ♡'
+  ].map(function (line) { return line.normalize('NFC'); });
 
   var letterNodes = [];
   var lineIndex = 0;
@@ -188,6 +164,7 @@
   function typeNextCharacter() {
     if (lineIndex >= letters.length) {
       document.getElementById('finish-letter').hidden = true;
+      document.querySelector('.love-letter').classList.add('letter-complete');
       return;
     }
     if (characterIndex >= letters[lineIndex].length) {
@@ -208,12 +185,19 @@
     lineIndex = letters.length;
     letterNodes.forEach(function (node, index) { node.textContent = letterLines[index]; });
     document.getElementById('finish-letter').hidden = true;
+    document.querySelector('.love-letter').classList.add('letter-complete');
   }
   document.getElementById('finish-letter').addEventListener('click', finishLetter);
 
   function showLetter() {
     if (api.letterStarted) return;
     api.letterStarted = true;
+    if (songPrepared && songWanted) {
+      song.currentTime = songStart;
+      song.volume = .06;
+      if (song.paused) playSong();
+      else fadeSongIn();
+    }
     document.body.classList.add('letter-active');
     document.getElementById('birthday').setAttribute('aria-hidden', 'true');
     document.getElementById('letter-scene').setAttribute('aria-hidden', 'false');
@@ -235,39 +219,52 @@
       return typed;
     });
     typingTimer = setTimeout(typeNextCharacter, 1100);
-    showMemory();
-    photoTimer = setInterval(showMemory, 3300);
+    memoriesRunning = true;
+    // Four slots rotate about 1.6 seconds apart; each image holds clear for four seconds.
+    for (var slot = 0; slot < 4; slot++) scheduleMemory(slot, slot * 1600);
   }
 
-  function showMemory() {
-    if (document.hidden || !photos.length || !api.letterStarted) return;
+  function scheduleMemory(slot, delay) {
+    if (!memoriesRunning || !photos.length) return;
+    memoryTimers[slot] = setTimeout(function () { showMemory(slot); }, delay);
+  }
+
+  function showMemory(slot) {
+    if (!memoriesRunning || !photos.length || !api.letterStarted) return;
+    if (document.hidden) { scheduleMemory(slot, 800); return; }
     var index = photoIndex++;
     var frame = document.createElement('figure');
-    frame.className = 'memory-photo';
+    frame.className = 'memory-photo memory-slot-' + slot;
     var image = document.createElement('img');
     image.alt = '';
     image.decoding = 'async';
-    var side = index % 2;
-    var row = Math.floor(index / 2) % 3;
-    frame.style.setProperty('--tilt', (side ? 5 : -5) + 'deg');
-    frame.style[side ? 'right' : 'left'] = (innerWidth < 620 ? '-22px' : '2.5vw');
-    frame.style.top = (row === 0 ? '-1vh' : row === 1 ? '28vh' : '59vh');
+    frame.style.setProperty('--tilt', (slot % 2 ? 4 : -4) + 'deg');
+    var retired = false;
+    function nextMemory() {
+      if (retired) return;
+      retired = true;
+      frame.remove();
+      scheduleMemory(slot, 100);
+    }
     image.addEventListener('load', function () {
-      if (!api.letterStarted) return;
+      if (!memoriesRunning) return;
       frame.appendChild(image);
       document.getElementById('memory-photos').appendChild(frame);
-      frame.addEventListener('animationend', function () { frame.remove(); }, { once: true });
+      frame.addEventListener('animationend', nextMemory, { once: true });
       // Also clean up if animations are disabled by the visitor's stylesheet.
-      setTimeout(function () { frame.remove(); }, 6600);
+      setTimeout(nextMemory, 6600);
     }, { once: true });
+    image.addEventListener('error', nextMemory, { once: true });
     image.src = photos[index % photos.length];
   }
 
   window.addEventListener('pagehide', function () {
     clearTimeout(sceneTimer);
     clearTimeout(typingTimer);
-    clearInterval(photoTimer);
+    memoriesRunning = false;
+    memoryTimers.forEach(clearTimeout);
     song.pause();
-    if (youtubeReady) youtubePlayer.pauseVideo();
+    cancelAnimationFrame(volumeAnimation);
+    if (songObjectUrl) URL.revokeObjectURL(songObjectUrl);
   });
 })();

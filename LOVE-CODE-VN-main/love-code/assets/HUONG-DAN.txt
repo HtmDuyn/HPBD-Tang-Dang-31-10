@@ -1,12 +1,11 @@
-Project ?? c? s?n 16 ?nh trong assets/memories/01.jpg ??n 16.jpg.
-Danh s?ch ?nh v? c?u h?nh nh?c n?m trong media-config.js.
-Kh?ng c?n ch?n file ho?c l?u ?nh trong tr?nh duy?t.
+Project đã có sẵn 16 ảnh trong assets/memories/01.jpg đến 16.jpg.
+Nhạc Ordinary — Alex Warren nằm trong assets/ordinary.mp3.
+Danh sách ảnh và cấu hình nhạc nằm trong media-config.js.
 
-Nh?c: Ordinary ? Alex Warren, video YouTube ch?nh th?c u2ah9tWTkmk.
-B?m Th?i n?n s? y?u c?u ph?t nh?c t? gi?y 35, ??ng th?i chuy?n sang thi?p.
-Tr?nh ph?t ???c chu?n b? khi b?m M? qu? ?? s?n s?ng cho thao t?c Th?i n?n.
-C?n Internet ?? ph?t nh?c YouTube. N?u tr?nh duy?t ch?n ph?t t? ??ng,
-n?t ph?t v? tr?nh ph?t YouTube v?n cho ph?p b?t nh?c tr?c ti?p.
+Bấm Thổi nến sẽ tắt ngọn nến và chuyển sang thiệp.
+Nhạc được mở âm thanh đúng lúc thiệp xuất hiện, bắt đầu từ giây 35.
+Không cần YouTube, Internet hoặc chọn file.
+Nút nhạc cho phép tắt/bật trong cảnh thiệp.
 
-M?i ?nh: hi?n r? d?n 1 gi?y, gi? r? 4 gi?y, m? ?i 1,4 gi?y.
-C?c ?nh xu?t hi?n l?n l??t, l?p l?i danh s?ch v? lu?n n?m sau thi?p.
+Mỗi ảnh: hiện rõ dần 1 giây, giữ rõ 4 giây, mờ đi 1,4 giây.
+Các ảnh xuất hiện lần lượt, lặp lại danh sách và luôn nằm sau thiệp.

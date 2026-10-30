@@ -17,8 +17,7 @@ window.BIRTHDAY_MEDIA = {
                    "assets/memories/15.jpg",
                    "assets/memories/16.jpg"
                ],
-    "song":  "",
-    "youtubeId":  "u2ah9tWTkmk",
-    "youtubeStart":  35,
+    "song":  "assets/ordinary.mp3",
+    "songStart":  35,
     "songTitle":  "Ordinary — Alex Warren"
 };
