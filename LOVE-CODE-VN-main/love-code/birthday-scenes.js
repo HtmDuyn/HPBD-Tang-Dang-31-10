@@ -42,7 +42,7 @@
     return songLoading;
   }
   // Begin loading before the heart animation, rather than waiting for the candle.
-  prepareSong().catch(function () {});
+  prepareSong().catch(function () { });
   song.addEventListener('ended', function () {
     if (songWanted) { song.currentTime = songStart; playSong(); }
   });
@@ -138,7 +138,7 @@
     clearInterval(window.musicTimer);
     window.musicTimer = null;
     window.musicEnabled = false;
-    if (window.audioContext) window.audioContext.suspend().catch(function () {});
+    if (window.audioContext) window.audioContext.suspend().catch(function () { });
     if (songPrepared) song.currentTime = songStart;
     playSong();
     sceneTimer = setTimeout(showLetter, 3000);
@@ -148,23 +148,30 @@
     'Chúc mừng sinh nhật Anh Iu Tăng Đeng của em! ♡',
     'Chúc anh tuổi mới luôn khỏe mạnh, bình an và cười thật nhiều.',
     'Mong những điều anh ấp ủ sẽ từng chút một trở thành hiện thực.',
-    'Cảm ơn anh vì đã đến, và làm những ngày bình thường của em hóa đặc biệt.',
-    'Em thương cả những lúc anh rạng rỡ lẫn những ngày anh thấy mệt nhoài.',
-    'Khi thế giới ngoài kia quá vội, cứ về đây, em vẫn ở bên anh nhá!',
-    'Em mong mình sẽ có thêm nhiều chuyến đi, nhiều cái ôm và những tấm hình chung.',
-    'Dù mai này có bận rộn đến đâu, mình vẫn dành sự dịu dàng cho nhau.',
-    'Hôm nay anh cứ thật hạnh phúc đi, phần yêu thương còn lại đã có em lo rồi.',
-    'Yêu anh nhiều — Em mong chúng mình sẽ cùng viết tiếp thật nhiều sinh nhật nữa nhá! ♡'
+    'Em cảm ơn anh vì đã đến, và làm những ngày bình thường của em trở nên đặc biệt.',
+    'Khi thế giới ngoài kia quá vội, cứ về đây, em vẫn luôn ở đây với anh!',
+    'Em mong chúng mình sẽ có thật nhiều chuyến đi, thật nhiều cái ôm và thật nhiều tấm hình chung để có thật nhiều kỉ niệm với nhau.',
+    'Dù mai này có bận rộn đến đâu, mình vẫn luôn dành sự dịu dàng cho nhau ha anh.',
+    'Yêu anh nhiều lắm — Em mong chúng mình sẽ cùng viết tiếp thật nhiều sinh nhật nữa nhá! ♡',
+    'Nớp diuu ♡'
   ].map(function (line) { return line.normalize('NFC'); });
 
   var letterNodes = [];
   var lineIndex = 0;
   var characterIndex = 0;
   var letters = [];
+  function completeLetter() {
+    var finishBtn = document.getElementById('finish-letter');
+    if (finishBtn) finishBtn.hidden = true;
+    var loveLetter = document.querySelector('.love-letter');
+    if (loveLetter) loveLetter.classList.add('letter-complete');
+    var replayBtn = document.getElementById('replay-btn');
+    if (replayBtn) replayBtn.hidden = false;
+  }
+
   function typeNextCharacter() {
     if (lineIndex >= letters.length) {
-      document.getElementById('finish-letter').hidden = true;
-      document.querySelector('.love-letter').classList.add('letter-complete');
+      completeLetter();
       return;
     }
     if (characterIndex >= letters[lineIndex].length) {
@@ -184,10 +191,20 @@
     clearTimeout(typingTimer);
     lineIndex = letters.length;
     letterNodes.forEach(function (node, index) { node.textContent = letterLines[index]; });
-    document.getElementById('finish-letter').hidden = true;
-    document.querySelector('.love-letter').classList.add('letter-complete');
+    completeLetter();
   }
   document.getElementById('finish-letter').addEventListener('click', finishLetter);
+
+  var replayBtn = document.getElementById('replay-btn');
+  if (replayBtn) {
+    replayBtn.addEventListener('click', function () {
+      document.body.style.transition = 'opacity 0.5s ease';
+      document.body.style.opacity = '0';
+      setTimeout(function () {
+        window.location.reload();
+      }, 500);
+    });
+  }
 
   function lightLetterBackground() {
     var atmosphere = document.getElementById('letter-atmosphere');
