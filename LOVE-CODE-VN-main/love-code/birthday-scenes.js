@@ -160,11 +160,23 @@
   var lineIndex = 0;
   var characterIndex = 0;
   var letters = [];
+  function scrollLetterIfNeeded() {
+    var loveLetter = document.querySelector('.love-letter');
+    if (loveLetter && loveLetter.scrollHeight > loveLetter.clientHeight) {
+      loveLetter.scrollTop = loveLetter.scrollHeight;
+    }
+  }
+
   function completeLetter() {
     var finishBtn = document.getElementById('finish-letter');
     if (finishBtn) finishBtn.hidden = true;
     var loveLetter = document.querySelector('.love-letter');
-    if (loveLetter) loveLetter.classList.add('letter-complete');
+    if (loveLetter) {
+      loveLetter.classList.add('letter-complete');
+      setTimeout(function () {
+        loveLetter.scrollTo({ top: loveLetter.scrollHeight, behavior: 'smooth' });
+      }, 150);
+    }
     var replayBtn = document.getElementById('replay-btn');
     if (replayBtn) replayBtn.hidden = false;
   }
@@ -177,6 +189,7 @@
     if (characterIndex >= letters[lineIndex].length) {
       lineIndex++;
       characterIndex = 0;
+      scrollLetterIfNeeded();
       typingTimer = setTimeout(typeNextCharacter, 260);
       return;
     }
@@ -184,6 +197,7 @@
     span.className = 'ink-character';
     span.textContent = letters[lineIndex][characterIndex++];
     letterNodes[lineIndex].appendChild(span);
+    scrollLetterIfNeeded();
     typingTimer = setTimeout(typeNextCharacter, 27);
   }
 

@@ -99,7 +99,19 @@
     .dedication { margin: 17px 0 0; font-size: clamp(13px, 2vw, 16px); color: #d5abbc; }
     #music-toggle { position: fixed; bottom: 18px; right: 18px; z-index: 5; max-width: calc(100vw - 36px); padding: 11px 17px; border: 1px solid #e6b4cb55; border-radius: 25px; color: #ffe8ef; background: #1b101de8; font: 13px Arial, sans-serif; cursor: pointer; visibility: hidden; }
     .birthday-active #music-toggle { visibility: visible; }
-    #music-toggle:focus-visible { outline: 2px solid #ffd3a4; outline-offset: 4px; }
+    @media (max-width: 620px) {
+      .cake { transform: scale(.76); transform-origin: bottom center; margin: -28px auto 8px; }
+      .birthday-center { width: min(92vw, 440px); padding: 8px 0; }
+      .birthday-center .eyebrow { font-size: 10px; letter-spacing: .25em; margin-bottom: 8px; }
+      h1 { font-size: clamp(21px, 5.5vw, 29px); }
+      .dedication { font-size: 13px; margin-top: 10px; }
+      .blow-action { height: auto; margin-top: 14px; }
+      #blow-candle { padding: 10px 24px; font-size: 14px; }
+      #candle-hint { font-size: 11px; margin-top: 8px; }
+      #music-toggle { bottom: 12px; right: 12px; padding: 8px 14px; font-size: 12px; }
+      #open-gift { padding: 12px 28px; font-size: 15px; }
+      #welcome p { font-size: clamp(18px, 4.8vw, 24px); }
+    }
     @media (max-height: 560px) {
       .cake { transform: scale(.65); transform-origin: bottom center; margin-top: -80px; margin-bottom: 10px; }
       .birthday-center { padding: 8px 0; }
