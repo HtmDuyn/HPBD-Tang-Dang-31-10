@@ -7,10 +7,20 @@
 @keyframes flame-out { 30% { transform: rotate(-35deg) scale(1.4,.6); } 100% { transform: translate(-9px,-3px) scale(0); opacity: 0; box-shadow: none; } }
 .candle-out .candle::after { content: ''; position: absolute; bottom: 40px; left: -1px; width: 12px; height: 22px; border: 2px solid #e2dce488; border-bottom: 0; border-radius: 50%; opacity: 0; filter: blur(2px); animation: candle-smoke 1.6s .3s ease-out both; }
 @keyframes candle-smoke { 20% { opacity: .7; } 100% { opacity: 0; transform: translate(18px,-58px) scale(2); } }
-body.candle-out .birthday-center { animation: cake-depart 1.8s .55s cubic-bezier(.22,.61,.36,1) forwards; }
+body.candle-out .birthday-center { animation: cake-depart 2.6s .8s cubic-bezier(.22,.61,.36,1) forwards; }
 @keyframes cake-depart { from { opacity: 1; transform: translate(-50%,-50%) scale(1); } to { opacity: 0; transform: translate(-50%,-56%) scale(.88); filter: blur(12px); } }
 body.letter-active #birthday { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 1.6s ease, visibility 0s 1.6s; }
-#letter-scene { position: fixed; inset: 0; z-index: 2; isolation: isolate; visibility: hidden; opacity: 0; pointer-events: none; background: radial-gradient(ellipse at center, #30202c, #100b15 60%, #060509); transition: opacity 1.8s ease; }
+#letter-scene { position: fixed; inset: 0; z-index: 2; isolation: isolate; visibility: hidden; opacity: 0; pointer-events: none; background: radial-gradient(ellipse at center, #2e211c, #150f12 60%, #08070b); transition: opacity 2s ease; }
+.letter-atmosphere { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.letter-atmosphere::before, .letter-atmosphere::after { content: ''; position: absolute; width: 70vw; height: 75vh; border-radius: 50%; filter: blur(45px); opacity: .48; background: radial-gradient(ellipse,#edba5c29 0%,#dba94a13 36%,transparent 68%); animation: lamplight-drift 17s ease-in-out infinite alternate; }
+.letter-atmosphere::before { top: -18vh; left: -25vw; }
+.letter-atmosphere::after { right: -25vw; bottom: -20vh; animation-delay: -8s; }
+@keyframes lamplight-drift { from { opacity: .3; transform: translate(-2vw,-1vh) scale(.95); } to { opacity: .65; transform: translate(6vw,4vh) scale(1.13); } }
+.letter-star { position: absolute; left: var(--x); top: var(--y); width: var(--size); height: var(--size); border-radius: 50%; background: #fff2ca; box-shadow: 0 0 7px #ffe5a3aa; opacity: .15; animation: star-bling var(--duration) var(--delay) ease-in-out infinite; }
+.letter-star.glint::before, .letter-star.glint::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: linear-gradient(transparent,#fff5d2,transparent); border-radius: 50%; }
+.letter-star.glint::before { width: 1px; height: 14px; }
+.letter-star.glint::after { width: 14px; height: 1px; background: linear-gradient(90deg,transparent,#fff5d2,transparent); }
+@keyframes star-bling { 0%,100% { opacity: .12; transform: scale(.65); } 50% { opacity: .85; transform: scale(1.2); } }
 .letter-active #letter-scene { visibility: visible; opacity: 1; pointer-events: auto; }
 #memory-photos { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .memory-photo { position: absolute; width: clamp(140px, 16vw, 215px); height: clamp(185px, 31vh, 275px); margin: 0; padding: 5px 5px 17px; box-sizing: border-box; background: #f8e5dd; border: 1px solid #ffe7d655; border-radius: 3px; opacity: 0; box-shadow: 0 12px 45px #0008; animation: remember 6.4s ease-in-out both; }
@@ -26,12 +36,14 @@ body.letter-active #birthday { opacity: 0; visibility: hidden; pointer-events: n
   78.125% { opacity: .84; filter: blur(0); }
   100% { opacity: 0; transform: translateY(-12px) rotate(var(--tilt)) scale(1.03); filter: blur(5px); }
 }
-.love-letter { position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(620px, calc(100vw - 64px)); max-height: calc(100dvh - 90px); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; box-sizing: border-box; padding: 34px clamp(26px, 3vw, 48px) 26px; border: 1px solid #e8cdb6; border-radius: 5px; color: #161616; font-family: 'Birthday Hand', 'Segoe Print', cursive; background: url('assets/floral-corner.svg') left -22px top -29px / 105px auto no-repeat, url('assets/floral-corner.svg') right -31px bottom -30px / 100px auto no-repeat, linear-gradient(135deg,#fffaf1,#fcf1e8); box-shadow: inset 0 0 0 7px #fff6e8, inset 0 0 0 8px #d0b78f55, 0 0 0 6px #fbe8e00c, 0 25px 100px #0009; }
+.love-letter { --rule-height: 30px; position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(620px, calc(100vw - 64px)); max-height: calc(100dvh - 90px); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; box-sizing: border-box; padding: 38px clamp(34px, 3.5vw, 52px) 30px; border: 1px solid #cdb58d; border-radius: 2px 10px 3px 2px; color: #161616; font-family: 'Birthday Hand', 'Segoe Print', cursive; background: linear-gradient(90deg,transparent 29px,#b56e6238 29px 30px,transparent 30px), linear-gradient(0deg,transparent 49.7%,#bba27512 50%,transparent 50.3%), radial-gradient(ellipse at 0 0,#c2944b15,transparent 55%), linear-gradient(125deg,#f8efdc,#f2e3c7); box-shadow: inset 0 0 45px #a77c3c14, 0 1px 2px #ffe6b455, 0 25px 90px #0009; }
+.love-letter::before { content: ''; position: absolute; top: 0; right: 0; width: 20px; height: 20px; background: linear-gradient(45deg,#cfb68966 49%,#fbf2e2 50%); border-radius: 0 8px 0 5px; opacity: .6; pointer-events: none; }
 .letter-active .love-letter { animation: letter-arrive 1.8s ease both; }
 @keyframes letter-arrive { from { opacity: 0; transform: translate(-50%,-43%) perspective(900px) rotateX(9deg) rotate(-2deg) scale(.9); filter: blur(7px); } to { opacity: 1; transform: translate(-50%,-50%) perspective(900px) rotateX(0) rotate(0) scale(1); filter: blur(0); } }
 .letter-eyebrow { margin: 0 0 10px; color: #a47481; text-transform: uppercase; font: 10px Arial, sans-serif; letter-spacing: .2em; }
 .love-letter h2 { margin: 0 0 22px; font-family: inherit; font-weight: 400; font-style: normal; color: #161616; font-size: clamp(27px, 3vw, 33px); text-align: left; }
-#letter-text p { position: relative; margin: 0 0 9px; min-height: 1.55em; font-size: clamp(16px, 1.5vw, 18px); line-height: 1.55; font-kerning: normal; letter-spacing: normal; }
+#letter-text { background: repeating-linear-gradient(to bottom,transparent 0 calc(var(--rule-height) - 1px),#8e8c8060 calc(var(--rule-height) - 1px) var(--rule-height)); }
+#letter-text p { position: relative; margin: 0; min-height: var(--rule-height); font-size: clamp(16px, 1.5vw, 18px); line-height: var(--rule-height); font-kerning: normal; letter-spacing: normal; }
 .line-reserve { visibility: hidden; }
 .typed-line { position: absolute; top: 0; left: 0; width: 100%; }
 .ink-character { animation: ink-arrive .24s ease both; }
@@ -39,7 +51,7 @@ body.letter-active #birthday { opacity: 0; visibility: hidden; pointer-events: n
 .letter-footer { margin-top: 30px; padding-top: 0; border: 0; color: #161616; display: grid; grid-template-columns: 68px 1fr; align-items: end; gap: 10px 12px; text-align: right; }
 .letter-signature { grid-column: 2; justify-self: end; font: 25px/1.5 'Birthday Hand', 'Segoe Print', cursive; color: #161616; opacity: 0; transform: translateY(5px); transition: opacity .7s, transform .7s; }
 .letter-complete .letter-signature { opacity: 1; transform: none; }
-.letter-kiss { font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif; font-size: 23px; margin-left: 5px; }
+.letter-kiss { display: inline-block; width: 44px; height: 30px; object-fit: contain; vertical-align: middle; margin-left: 7px; transform: rotate(-13deg); opacity: .88; }
 .letter-candle-cluster { grid-column: 1; grid-row: 1 / 3; position: relative; display: flex; justify-content: center; align-items: end; gap: 6px; width: 68px; height: 68px; padding-bottom: 3px; border-bottom: 3px solid #d1bfa6; border-radius: 0 0 45% 45%; }
 .letter-candle { position: relative; display: block; width: 13px; height: 29px; border-radius: 4px 4px 2px 2px; background: linear-gradient(90deg,#dec2a0,#fff0ce 45%,#e8cda5); box-shadow: inset -2px 0 4px #ab8a6b33; }
 .letter-candle:nth-child(2) { height: 43px; }
@@ -55,9 +67,9 @@ body.letter-active #birthday { opacity: 0; visibility: hidden; pointer-events: n
 .letter-divider::after { transform: rotate(180deg); }
 #candle-transition { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
 #candle-transition::before { content: ''; position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse at center,#ffe6b93b, #e1a0bb1a 28%,transparent 65%); }
-.candle-out #candle-transition::before { animation: candle-bridge 3.6s ease-in-out both; }
+.candle-out #candle-transition::before { animation: candle-bridge 5.3s ease-in-out both; }
 @keyframes candle-bridge { 0% { opacity: 0; transform: scale(.45); } 43% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0; transform: scale(1.6); } }
-.transition-petal { position: absolute; left: 50%; top: 44%; width: 8px; height: 12px; border-radius: 75% 15% 75% 30%; background: #f5cfbc; box-shadow: 0 0 10px #ffdbae88; opacity: 0; animation: petals-drift 3.4s var(--delay) cubic-bezier(.2,.65,.35,1) both; }
+.transition-petal { position: absolute; left: 50%; top: 44%; width: 8px; height: 12px; border-radius: 75% 15% 75% 30%; background: #f5cfbc; box-shadow: 0 0 10px #ffdbae88; opacity: 0; animation: petals-drift 5s var(--delay) cubic-bezier(.2,.65,.35,1) both; }
 @keyframes petals-drift { 0% { opacity: 0; transform: scale(.2); } 20% { opacity: .8; } 100% { opacity: 0; transform: translate(var(--dx),var(--dy)) rotate(var(--spin)) scale(.5); } }
 #finish-letter { grid-column: 2; justify-self: end; border: 0; background: none; color: #665b52; text-decoration: underline; font: 11px Arial, sans-serif; cursor: pointer; padding: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
@@ -67,10 +79,11 @@ body.letter-active #birthday { opacity: 0; visibility: hidden; pointer-events: n
   .memory-slot-1 { right: -12px; top: 3vh; }
   .memory-slot-2 { left: -12px; bottom: 3vh; }
   .memory-slot-3 { right: -12px; bottom: 2vh; }
-  .love-letter { width: calc(100vw - 56px); max-height: calc(100dvh - 150px); padding: 26px 24px; background-size: 85px auto, 82px auto, auto; }
+  .love-letter { --rule-height: 28px; width: calc(100vw - 56px); max-height: calc(100dvh - 150px); padding: 29px 25px 26px 33px; background: linear-gradient(90deg,transparent 18px,#b56e6238 18px 19px,transparent 19px), linear-gradient(0deg,transparent 49.7%,#bba27512 50%,transparent 50.3%), radial-gradient(ellipse at 0 0,#c2944b15,transparent 55%),linear-gradient(125deg,#f8efdc,#f2e3c7); }
   .letter-footer { grid-template-columns: 46px 1fr; gap: 10px 4px; }
   .letter-candle-cluster { transform: scale(.75); transform-origin: bottom left; }
   .letter-signature { font-size: 21px; }
+  .letter-kiss { width: 34px; height: 25px; margin-left: 3px; }
 }
 @media (max-height: 560px) {
   .blow-action { height: 62px; margin-top: 8px; }
@@ -84,6 +97,8 @@ body.letter-active #birthday { opacity: 0; visibility: hidden; pointer-events: n
   .transition-petal { display: none; }
   .letter-active .love-letter { animation: none; }
   .letter-candle::before { animation: none; }
+  .letter-star { animation: none; opacity: .35; }
+  .letter-atmosphere::before, .letter-atmosphere::after { animation: none; }
 }
 @font-face {
   font-family: 'Birthday Hand';

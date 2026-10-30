@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Một lời chúc sinh nhật dành riêng cho Anh Iu Tăng Đăng.">
   <link rel="icon" href="爱心.png" type="image/png">
-  <link rel="stylesheet" href="birthday-scenes.css?v=handwritten-letter-5">
+  <link rel="stylesheet" href="birthday-scenes.css?v=vintage-letter-6">
   <!--     https://github.com/he-weilai/love-code -->
   <style>
     html, body {
@@ -136,19 +136,20 @@
     </div>
   </section>
   <section id="letter-scene" aria-label="Thiệp yêu thương" aria-hidden="true">
+    <div id="letter-atmosphere" class="letter-atmosphere" aria-hidden="true"></div>
     <div id="memory-photos" aria-hidden="true"></div>
     <article class="love-letter" aria-labelledby="letter-heading">
       <p class="letter-eyebrow">Gửi người em thương nhất</p>
       <h2 id="letter-heading">Anh Iu Tăng Đăng ♡</h2>
       <div id="letter-text" aria-hidden="true"></div>
       <p id="letter-accessible" class="sr-only"></p>
-      <div class="letter-footer"><span class="letter-signature">from Myduyn with love <span class="letter-kiss" role="img" aria-label="kiss">💋</span></span><div class="letter-candle-cluster" aria-hidden="true"><i class="letter-candle"></i><i class="letter-candle"></i><i class="letter-candle"></i></div><button id="finish-letter" type="button">Đọc trọn lời chúc</button></div>
+      <div class="letter-footer"><span class="letter-signature">from Myduyn with love <img class="letter-kiss" src="assets/lipstick-kiss.svg" alt="Dấu hôn son"></span><div class="letter-candle-cluster" aria-hidden="true"><i class="letter-candle"></i><i class="letter-candle"></i><i class="letter-candle"></i></div><button id="finish-letter" type="button">Đọc trọn lời chúc</button></div>
     </article>
   </section>
   <audio id="love-song" preload="auto"></audio>
   <button id="music-toggle" type="button" aria-pressed="false">♫ Bật nhạc sinh nhật</button>
-  <script src="media-config.js?v=handwritten-letter-5"></script>
-  <script src="birthday-scenes.js?v=handwritten-letter-5"></script>
+  <script src="media-config.js?v=vintage-letter-6"></script>
+  <script src="birthday-scenes.js?v=vintage-letter-6"></script>
   <script>
     var birthdayStarted = false;
     var experienceStarted = false;
@@ -273,8 +274,8 @@
         playBirthdayMusic();
       }
       setTimeout(function () { spawnWish(); setInterval(spawnWish, 1000); }, 2100);
-      // Allow the two-second entrance, then hold the fully visible cake for five seconds.
-      setTimeout(function () { BirthdayScenes.enableCandle(); }, 7000);
+      // Show the candle action as the cake finishes its two-second entrance.
+      setTimeout(function () { BirthdayScenes.enableCandle(); }, 2000);
     }
     window.requestAnimationFrame =
       window.__requestAnimationFrame ||

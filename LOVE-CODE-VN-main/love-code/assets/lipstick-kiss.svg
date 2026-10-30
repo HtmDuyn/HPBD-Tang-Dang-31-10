@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 78" fill="none">
+  <defs>
+    <mask id="lip-print">
+      <rect width="120" height="78" fill="white"/>
+      <g stroke="black" stroke-linecap="round" opacity=".65">
+        <path d="M19 31l3-7m4 12 2-13m7 11 1-12m7 13 1-15m7 16 1-13m8 15v-9m8 9-1-13m9 12-1-15m8 13-2-11m9 10-2-9m10 8-3-6" stroke-width="1.3"/>
+        <path d="m18 46 4 4m4-7 3 13m7-11 2 16m7-16 1 19m8-18 1 18m7-18-1 18m9-18-1 17m9-17-2 15m9-15-3 12m10-11-3 7m10-8-4 4" stroke-width="1.5"/>
+      </g>
+      <g fill="black" opacity=".6"><circle cx="35" cy="27" r="1.3"/><circle cx="47" cy="55" r="1"/><circle cx="74" cy="29" r="1"/><circle cx="85" cy="51" r="1.2"/><circle cx="59" cy="61" r=".8"/></g>
+    </mask>
+  </defs>
+  <g fill="#b82e49" mask="url(#lip-print)">
+    <path opacity=".85" d="M8 36C19 29 26 20 38 19C46 17 49 10 56 17L61 23C67 15 71 15 78 20C93 22 101 32 112 36C94 36 80 34 64 38C60 40 57 39 53 37C37 33 23 38 8 36Z"/>
+    <path opacity=".8" d="M10 42C24 43 39 39 53 43C58 45 62 45 67 43C82 40 98 44 110 41C97 53 85 64 66 67C44 71 24 59 10 42Z"/>
+    <path opacity=".35" d="M17 39C37 36 47 39 59 40C72 39 89 37 103 39C83 41 74 42 61 42C45 41 30 40 17 39Z"/>
+  </g>
+</svg>

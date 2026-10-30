@@ -131,7 +131,7 @@
       petal.style.setProperty('--delay', Math.random() * .3 + 's');
       transition.appendChild(petal);
     }
-    setTimeout(function () { transition.replaceChildren(); }, 3900);
+    setTimeout(function () { transition.replaceChildren(); }, 5600);
     document.getElementById('wishes').replaceChildren();
 
     // Stop the music box and start the vocal track within the candle click.
@@ -141,7 +141,7 @@
     if (window.audioContext) window.audioContext.suspend().catch(function () {});
     if (songPrepared) song.currentTime = songStart;
     playSong();
-    sceneTimer = setTimeout(showLetter, 1600);
+    sceneTimer = setTimeout(showLetter, 3000);
   });
 
   var letterLines = [
@@ -189,9 +189,26 @@
   }
   document.getElementById('finish-letter').addEventListener('click', finishLetter);
 
+  function lightLetterBackground() {
+    var atmosphere = document.getElementById('letter-atmosphere');
+    if (atmosphere.children.length) return;
+    var starCount = innerWidth < 620 ? 36 : 60;
+    for (var starIndex = 0; starIndex < starCount; starIndex++) {
+      var star = document.createElement('span');
+      star.className = 'letter-star' + (starIndex % 5 === 0 ? ' glint' : '');
+      star.style.setProperty('--x', (2 + Math.random() * 96) + '%');
+      star.style.setProperty('--y', (2 + Math.random() * 96) + '%');
+      star.style.setProperty('--size', (1 + Math.random() * 2) + 'px');
+      star.style.setProperty('--duration', (3 + Math.random() * 4) + 's');
+      star.style.setProperty('--delay', (-Math.random() * 7) + 's');
+      atmosphere.appendChild(star);
+    }
+  }
+
   function showLetter() {
     if (api.letterStarted) return;
     api.letterStarted = true;
+    lightLetterBackground();
     if (songPrepared && songWanted) {
       song.currentTime = songStart;
       song.volume = .06;
