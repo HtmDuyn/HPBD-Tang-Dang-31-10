@@ -160,23 +160,11 @@
   var lineIndex = 0;
   var characterIndex = 0;
   var letters = [];
-  function scrollLetterIfNeeded() {
-    var loveLetter = document.querySelector('.love-letter');
-    if (loveLetter && loveLetter.scrollHeight > loveLetter.clientHeight) {
-      loveLetter.scrollTop = loveLetter.scrollHeight;
-    }
-  }
-
   function completeLetter() {
     var finishBtn = document.getElementById('finish-letter');
     if (finishBtn) finishBtn.hidden = true;
     var loveLetter = document.querySelector('.love-letter');
-    if (loveLetter) {
-      loveLetter.classList.add('letter-complete');
-      setTimeout(function () {
-        loveLetter.scrollTo({ top: loveLetter.scrollHeight, behavior: 'smooth' });
-      }, 150);
-    }
+    if (loveLetter) loveLetter.classList.add('letter-complete');
     var replayBtn = document.getElementById('replay-btn');
     if (replayBtn) replayBtn.hidden = false;
   }
@@ -189,7 +177,18 @@
     if (characterIndex >= letters[lineIndex].length) {
       lineIndex++;
       characterIndex = 0;
-      scrollLetterIfNeeded();
+      // Gently keep active line visible if it reaches bottom of card, preserving top of letter
+      if (lineIndex < letters.length && letterNodes[lineIndex]) {
+        var loveLetter = document.querySelector('.love-letter');
+        var lineP = letterNodes[lineIndex].parentElement;
+        if (loveLetter && lineP) {
+          var letterBox = loveLetter.getBoundingClientRect();
+          var lineBox = lineP.getBoundingClientRect();
+          if (lineBox.bottom > letterBox.bottom - 15) {
+            loveLetter.scrollTop += (lineBox.bottom - letterBox.bottom + 25);
+          }
+        }
+      }
       typingTimer = setTimeout(typeNextCharacter, 260);
       return;
     }
@@ -197,7 +196,6 @@
     span.className = 'ink-character';
     span.textContent = letters[lineIndex][characterIndex++];
     letterNodes[lineIndex].appendChild(span);
-    scrollLetterIfNeeded();
     typingTimer = setTimeout(typeNextCharacter, 27);
   }
 
@@ -240,6 +238,8 @@
     if (api.letterStarted) return;
     api.letterStarted = true;
     lightLetterBackground();
+    var letterContainer = document.querySelector('.love-letter');
+    if (letterContainer) letterContainer.scrollTop = 0;
     if (songPrepared && songWanted) {
       song.currentTime = songStart;
       song.volume = .06;
